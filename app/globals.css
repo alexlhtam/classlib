@@ -1,0 +1,98 @@
+/* globals.css — ported from legacy/index.html <style> + legacy/theme.jsx
+   editorial preset baked into :root as --cl-* tokens (runtime theme switching
+   and the notion/dense presets are dropped; editorial is the shipping look). */
+
+@import 'katex/dist/katex.min.css';
+
+:root {
+  /* editorial preset (legacy/theme.jsx CL_THEME_PRESETS.editorial) */
+  --cl-bg: #FBF8F2;
+  --cl-surface: #F5F1E8;
+  --cl-ink: #1F1A14;
+  --cl-ink-soft: #5A5147;
+  --cl-ink-faint: #8F857A;
+  --cl-line: #E5DFD2;
+  --cl-line-soft: #EFEAE0;
+  --cl-chip: #EFEAE0;
+  --cl-accent: #7A2E2E;
+  --cl-accent-tint: #F1E4E0;
+  --cl-success: #3F6F3F;
+  --cl-danger: #8B2A2A;
+  --cl-diff-add: #EAEFD9;
+  --cl-diff-add-ink: #3F6F3F;
+  --cl-diff-del: #F2DCD4;
+  --cl-diff-del-ink: #8B2A2A;
+  --cl-radius: 2px;
+  --cl-body-font: "Source Serif 4", Georgia, serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+body {
+  font-family: var(--cl-body-font);
+  background: var(--cl-bg);
+  color: var(--cl-ink);
+}
+
+@keyframes cl-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cl-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cl-slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.cl-fade { animation: cl-fade-up .28s cubic-bezier(.22,.7,.3,1) both; }
+.cl-slidein { animation: cl-slide-in .22s cubic-bezier(.22,.7,.3,1) both; }
+
+/* Prose styles for rendered Markdown + KaTeX */
+.cl-prose { color: var(--cl-ink); }
+.cl-prose > *:first-child { margin-top: 0; }
+.cl-prose h1 { font-size: 1.6em; font-weight: 600; margin: 1.4em 0 .5em; letter-spacing: -0.3px; }
+.cl-prose h2 {
+  font-size: 1.25em; font-weight: 600; margin: 1.6em 0 .5em; letter-spacing: -0.2px;
+  padding-bottom: .25em; border-bottom: 1px solid var(--cl-line-soft);
+}
+.cl-prose h3 { font-size: 1.05em; font-weight: 600; margin: 1.3em 0 .4em; }
+.cl-prose p { margin: .9em 0; }
+.cl-prose strong { font-weight: 600; color: var(--cl-ink); }
+.cl-prose em { font-style: italic; }
+.cl-prose a {
+  color: var(--cl-accent); text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--cl-accent) 40%, transparent);
+}
+.cl-prose ul, .cl-prose ol { padding-left: 1.5em; margin: .8em 0; }
+.cl-prose li { margin: .25em 0; }
+.cl-prose code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .88em;
+  background: var(--cl-chip); padding: 1px 5px; border-radius: 4px; color: var(--cl-ink);
+}
+.cl-prose pre {
+  background: var(--cl-surface); border: 1px solid var(--cl-line); border-radius: var(--cl-radius);
+  padding: 14px 16px; overflow-x: auto; margin: 1em 0; font-size: .85em; line-height: 1.55;
+}
+.cl-prose pre code { background: transparent; padding: 0; font-size: 1em; }
+.cl-prose blockquote {
+  border-left: 3px solid var(--cl-accent); padding: .2em 0 .2em 1em;
+  margin: 1em 0; color: var(--cl-ink-soft); font-style: italic;
+}
+.cl-prose table { border-collapse: collapse; margin: 1em 0; font-size: .92em; width: 100%; }
+.cl-prose th, .cl-prose td { padding: 8px 14px; border-bottom: 1px solid var(--cl-line-soft); text-align: left; }
+.cl-prose th { font-weight: 600; background: var(--cl-line-soft); border-bottom: 1px solid var(--cl-line); }
+.cl-prose tr:last-child td { border-bottom: none; }
+.cl-prose hr { border: none; border-top: 1px solid var(--cl-line); margin: 2em 0; }
+.cl-prose .katex { font-size: 1.05em; }
+.cl-prose .katex-display { margin: 1.1em 0; padding: .4em 0; overflow-x: auto; overflow-y: hidden; }
+
+/* Scrollbars: thin and quiet */
+.cl-root *::-webkit-scrollbar { width: 8px; height: 8px; }
+.cl-root *::-webkit-scrollbar-thumb { background: var(--cl-line); border-radius: 4px; }
+.cl-root *::-webkit-scrollbar-track { background: transparent; }

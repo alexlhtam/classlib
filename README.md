@@ -1,38 +1,70 @@
 # classlib — Knowledge Canvas
 
 A collaborative class-notes library with GitHub-style pull-request review for
-edits. Students read the canonical version of a note, suggest changes, and
-maintainers review the diff before it lands.
+edits. Students read the canonical version of a note, suggest changes (which open
+a "PR"), and maintainers review the diff before it merges.
 
-Imported from the [Claude Design](https://claude.ai/design) exploration and
-implemented in the **editorial-serif** design direction (paper-toned surfaces,
-Source Serif body, small-caps section labels, ox-blood accent, square corners).
+This is being rebuilt from a browser-only prototype into a **deployable,
+multi-tenant Next.js application** per [`docs/plan.md`](docs/plan.md). The
+original static prototype is preserved in [`legacy/`](legacy/) as the visual
+reference.
 
-## Run
+## Stack
 
-The page loads its components as `text/babel` modules, which the browser fetches
-over XHR — so it must be served over HTTP (opening `index.html` via `file://`
-will fail with CORS errors). Any static server works:
+- **Next.js** (App Router) + **TypeScript**
+- **Auth.js (NextAuth v5)** — Google OAuth + email/password
+- **Prisma** + **PostgreSQL** — per-institution multi-tenancy (seeded copy per
+  institution; every tenant-scoped row carries `institutionId`)
+- Server Markdown + KaTeX rendering, LCS diff for PR review
+
+## Status
+
+Phases 1–2 of the plan are in place: scaffold, schema + first migration, canonical
+content + seed, auth, and the tenancy gate. The read/write UI (Phases 3–5) and
+deploy (Phase 6) are still to come.
+
+## Local development
+
+Requires Node 20+ and a PostgreSQL database.
 
 ```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
+# 1. Install deps
+npm install
+
+# 2. Configure env (copy and edit)
+cp .env.example .env       # set DATABASE_URL, AUTH_SECRET, (optional Google creds)
+
+# 3. Apply schema + seed demo data
+npm run db:migrate         # prisma migrate dev
+npm run db:seed            # demo institution + admin/student + content
+
+# 4. Run
+npm run dev                # http://localhost:3000
 ```
 
-## Structure
+Demo credentials (from the seed):
 
-| File | Role |
+- Admin — `admin@demo.classlib` / `password123`
+- Student — `student@demo.classlib` / `password123`
+
+### Scripts
+
+| Script | Purpose |
 |---|---|
-| `index.html` | Entry point; loads deps + scripts, mounts one full-screen instance |
-| `app.jsx` | `KnowledgeCanvas` shell — top bar, role switch, view routing |
-| `theme.jsx` | Design tokens → CSS variables (editorial preset is the active one) |
-| `data.js` | Sample modules, notes (Markdown + LaTeX), and pull requests |
-| `render.js` | Markdown + KaTeX rendering and line/word diff |
-| `ui.jsx` | Shared primitives — buttons, badges, avatars, toasts, icons |
-| `views-home.jsx` | Module grid + activity feed, and the module note list |
-| `views-reader.jsx` | Note reader with TOC and "Suggest edit" |
-| `views-editor.jsx` | Write/Split/Read editor with live diff + submit-PR panel |
-| `views-pr.jsx` | PR list and PR review (inline / side-by-side / rendered diff) |
+| `npm run dev` / `build` / `start` | Next.js dev / production build / serve |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run test` | Vitest (diff + tenancy gate) |
+| `npm run db:migrate` / `db:seed` / `db:studio` / `db:reset` | Prisma helpers |
 
-External libraries (React, Babel, marked, KaTeX, fonts) load from CDNs, so an
-internet connection is required.
+### Note on Prisma engines (restricted networks)
+
+If the Prisma engine auto-download is blocked, fetch the query + schema engines
+manually and point Prisma at them via `PRISMA_QUERY_ENGINE_LIBRARY` and
+`PRISMA_SCHEMA_ENGINE_BINARY` (see `.env.example`).
+
+## Deployment (Phase 6)
+
+Target is Vercel + hosted Postgres (Neon/Supabase). Set `DATABASE_URL`,
+`AUTH_SECRET`, `AUTH_URL`, `GOOGLE_CLIENT_ID/SECRET` (and optional
+`BLOB_READ_WRITE_TOKEN`), run `prisma migrate deploy`, and configure the Google
+OAuth callback. Not yet wired — requires project credentials.
