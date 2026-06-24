@@ -2,6 +2,13 @@
 
 Guidance for working in this repo.
 
+> **Migration in progress.** The repo is being rebuilt from the browser-only
+> prototype into a deployable Next.js + TypeScript + Prisma/Postgres multi-tenant
+> app per `docs/plan.md`. The original prototype now lives in `legacy/` (the
+> notes below describe it and remain the visual reference). The new app lives at
+> the repo root (`app/`, `lib/`, `prisma/`). See `README.md` for the current
+> stack and local-dev steps. The sections below document the **legacy prototype**.
+
 ## What this is
 
 **classlib — Knowledge Canvas**: a collaborative class-notes library with

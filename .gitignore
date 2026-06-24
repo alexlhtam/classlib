@@ -4,3 +4,18 @@
 # OS / editor cruft
 .DS_Store
 *.swp
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env*.local
+
+# Prisma
+prisma/*.db

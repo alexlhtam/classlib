@@ -1,0 +1,179 @@
+// classlib — Prisma schema (Postgres)
+// Multi-tenant: every tenant-scoped row carries institutionId. Reads/writes are
+// gated through lib/tenancy.ts (requireMembership) so cross-tenant access is
+// impossible. JWT sessions (Auth.js), so no Session table is needed.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum NoteStatus {
+  STABLE
+  REVIEWED
+  PR_OPEN
+  DRAFT
+}
+
+enum SuggestionStatus {
+  OPEN
+  MERGED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  image        String?
+  // null for OAuth-only accounts; set for email+password (bcrypt hash).
+  passwordHash String?
+  createdAt    DateTime @default(now())
+
+  accounts            Account[]
+  memberships         Membership[]
+  authoredNotes       Note[]            @relation("NoteAuthor")
+  authoredSuggestions Suggestion[]      @relation("SuggestionAuthor")
+  reviewedSuggestions Suggestion[]      @relation("SuggestionReviewer")
+}
+
+// Auth.js OAuth account links (Google, etc.).
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Institution {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  memberships Membership[]
+  modules     Module[]
+  notes       Note[]
+  suggestions Suggestion[]
+}
+
+// A user can belong to many institutions; role is per-institution.
+model Membership {
+  id            String      @id @default(cuid())
+  userId        String
+  institutionId String
+  role          Role        @default(USER)
+  createdAt     DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, institutionId])
+  @@index([institutionId])
+}
+
+model Module {
+  id            String  @id @default(cuid())
+  institutionId String
+  code          String
+  title         String
+  description   String
+  order         Int     @default(0)
+
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  notes       Note[]
+
+  @@index([institutionId])
+}
+
+model Note {
+  id            String     @id @default(cuid())
+  institutionId String
+  moduleId      String
+  slug          String
+  title         String
+  body          String     @db.Text
+  status        NoteStatus @default(STABLE)
+  version       Int        @default(1)
+  authorId      String?
+  tags          String[]   @default([])
+  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime   @default(now())
+
+  institution Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  author      User?        @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  suggestions Suggestion[]
+
+  @@unique([institutionId, slug])
+  @@index([institutionId])
+  @@index([moduleId])
+}
+
+// The "PR": a proposed edit to a Note, reviewed by an ADMIN before merge.
+model Suggestion {
+  id            String           @id @default(cuid())
+  institutionId String
+  noteId        String
+  title         String
+  summary       String           @db.Text
+  proposedBody  String           @db.Text
+  // snapshot of the note body when the suggestion was opened (the diff base).
+  baseBody      String           @db.Text
+  status        SuggestionStatus @default(OPEN)
+  authorId      String?
+  additions     Int              @default(0)
+  deletions     Int              @default(0)
+  reviewedById  String?
+  reviewedAt    DateTime?
+  // future seam: pre-review by the Anthropic Claude API (lib/review/ai.ts).
+  aiReview      Json?
+  createdAt     DateTime         @default(now())
+
+  institution Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  note        Note              @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  author      User?             @relation("SuggestionAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  reviewedBy  User?             @relation("SuggestionReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  assets      SuggestionAsset[]
+
+  @@index([institutionId])
+  @@index([noteId])
+}
+
+// Proof/source upload attached to a suggestion (metadata; blob upload optional).
+model SuggestionAsset {
+  id           String   @id @default(cuid())
+  suggestionId String
+  name         String
+  url          String
+  mime         String
+  size         Int
+  createdAt    DateTime @default(now())
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+
+  @@index([suggestionId])
+}
