@@ -31,8 +31,9 @@ Requires Node 20+ and a PostgreSQL database.
 # 1. Install deps
 npm install
 
-# 2. Configure env (copy and edit)
-cp .env.example .env       # set DATABASE_URL, AUTH_SECRET, (optional Google creds)
+# 2. Configure env
+cp .env.example .env                                   # then set DATABASE_URL (+ optional Google creds)
+echo "AUTH_SECRET=\"$(openssl rand -base64 33)\"" >> .env   # required: generate a real secret
 
 # 3. Apply schema + seed demo data
 npm run db:migrate         # prisma migrate dev
@@ -41,6 +42,10 @@ npm run db:seed            # demo institution + admin/student + content
 # 4. Run
 npm run dev                # http://localhost:3000
 ```
+
+> **Restart `npm run dev` after editing `.env`** — Next.js only reads env files
+> at startup. A missing/unloaded `AUTH_SECRET` is the usual cause of Auth.js's
+> generic *"There was a problem with the server configuration"* error.
 
 Demo credentials (from the seed):
 
