@@ -92,6 +92,30 @@ body {
 .cl-prose .katex { font-size: 1.05em; }
 .cl-prose .katex-display { margin: 1.1em 0; padding: .4em 0; overflow-x: auto; overflow-y: hidden; }
 
+/* Diagrams (Mermaid). Before hydration the raw source is hidden; once rendered
+   the block becomes a centered, framed figure. */
+.cl-prose .cl-mermaid {
+  display: none;
+}
+.cl-prose .cl-mermaid.cl-mermaid-rendered {
+  display: flex;
+  justify-content: center;
+  margin: 1.4em 0;
+  padding: 16px;
+  background: var(--cl-surface);
+  border: 1px solid var(--cl-line);
+  border-radius: var(--cl-radius);
+  overflow-x: auto;
+}
+.cl-prose .cl-mermaid.cl-mermaid-rendered svg { max-width: 100%; height: auto; }
+.cl-prose .cl-mermaid-error {
+  display: block;
+  color: var(--cl-danger);
+  background: var(--cl-surface);
+  border: 1px solid var(--cl-line);
+  font-size: .85em;
+}
+
 /* Scrollbars: thin and quiet */
 .cl-root *::-webkit-scrollbar { width: 8px; height: 8px; }
 .cl-root *::-webkit-scrollbar-thumb { background: var(--cl-line); border-radius: 4px; }

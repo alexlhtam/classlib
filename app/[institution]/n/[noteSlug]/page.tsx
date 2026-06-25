@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { guardMembership } from '@/lib/guard';
 import { getNoteBySlug } from '@/lib/queries';
 import { renderMarkdown, extractToc } from '@/lib/render';
-import { Prose } from '@/components/Prose';
+import { DiagramProse } from '@/components/DiagramProse';
 import { StatusBadge, Avatar } from '@/components/ui';
 import { I } from '@/components/icons';
 import { noteStatusKey } from '@/lib/status';
@@ -104,7 +104,7 @@ export default async function ReaderPage({
           </Link>
         </div>
 
-        <Prose html={html} />
+        <DiagramProse html={html} />
 
         <div
           style={{
