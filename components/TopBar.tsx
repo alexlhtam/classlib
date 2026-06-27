@@ -115,6 +115,18 @@ export function TopBar({
         )}
       </Link>
 
+      {role === 'ADMIN' && (
+        <Link
+          href={`/${slug}/settings`}
+          style={{
+            fontSize: 12.5, color: 'var(--cl-ink-soft)', textDecoration: 'none',
+            border: '1px solid var(--cl-line)', padding: '5px 12px', borderRadius: 'var(--cl-radius)',
+          }}
+        >
+          Settings
+        </Link>
+      )}
+
       <span
         title={`You are ${role === 'ADMIN' ? 'a maintainer' : 'a member'} of this classlib`}
         style={{
