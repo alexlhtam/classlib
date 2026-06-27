@@ -189,6 +189,25 @@ Maintain a tentative distance $d[v]$ for every vertex, initialized to $\\infty$ 
 
 $$d[v] \\leftarrow \\min\\big(d[v],\\ d[u] + w(u, v)\\big)$$
 
+## Example graph
+
+A small weighted, directed graph from source $s$ to target $t$. classlib turns
+this edge/weight dictionary into a diagram — no diagram syntax required:
+
+\`\`\`graph
+{
+  "directed": true,
+  "weighted": true,
+  "direction": "LR",
+  "vertices": ["s", "a", "b", "c", "t"],
+  "edges": [
+    ["s", "a", 4], ["s", "b", 2], ["b", "a", 1],
+    ["a", "c", 5], ["b", "c", 8], ["c", "t", 3], ["a", "t", 11]
+  ],
+  "highlight": ["s", "t"]
+}
+\`\`\`
+
 ## Running time
 
 With a binary heap as the priority queue:
@@ -202,6 +221,18 @@ $$T(n, m) = O(m + n \\log n)$$
 ## Why non-negative weights?
 
 The proof of correctness rests on a *greedy invariant*: when a vertex $u$ is extracted, $d[u]$ is final. With negative edges, a later relaxation could lower $d[u]$ further, breaking the invariant. Use **Bellman-Ford** instead.
+
+## Aside: a vertex's lifecycle
+
+For finite-state machines and flowcharts, you can also write [Mermaid](https://mermaid.js.org) directly. Each vertex moves through these states:
+
+\`\`\`mermaid
+stateDiagram-v2
+  [*] --> Unvisited
+  Unvisited --> InQueue: discovered
+  InQueue --> Settled: extract-min
+  Settled --> [*]
+\`\`\`
 `;
 
 const BFS_BODY = `# Breadth-First Search
