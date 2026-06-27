@@ -31,4 +31,16 @@ export const I = {
   pr: (s = 14) => (
     <svg width={s} height={s} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="4" cy="3.5" r="1.5" /><circle cx="4" cy="12.5" r="1.5" /><circle cx="12" cy="12.5" r="1.5" /><path d="M4 5v6M9 4l3 3v4" /><path d="M9 4h-2" /></svg>
   ),
+  x: (s = 14) => (
+    <svg width={s} height={s} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="m4 4 8 8M12 4l-8 8" /></svg>
+  ),
+  write: (s = 14) => (
+    <svg width={s} height={s} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M3 3h10v10H3z" /><path d="M6 6h4M6 9h6M6 12h3" /></svg>
+  ),
+  split: (s = 14) => (
+    <svg width={s} height={s} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="2.5" width="5.5" height="11" rx="1" /><rect x="8.5" y="2.5" width="5.5" height="11" rx="1" /></svg>
+  ),
+  branch: (s = 14) => (
+    <svg width={s} height={s} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="4" cy="3" r="1.5" /><circle cx="4" cy="13" r="1.5" /><circle cx="12" cy="6" r="1.5" /><path d="M4 4.5v7M4 9c0-2 8-1 8-3" /></svg>
+  ),
 };

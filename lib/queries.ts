@@ -50,6 +50,25 @@ export function getSuggestions(institutionId: string) {
   });
 }
 
+export function getSuggestion(institutionId: string, id: string) {
+  return prisma.suggestion.findFirst({
+    where: { id, institutionId },
+    include: {
+      note: { select: { slug: true, title: true, version: true } },
+      author: { select: { name: true, email: true } },
+      reviewedBy: { select: { name: true, email: true } },
+    },
+  });
+}
+
+export function getMembers(institutionId: string) {
+  return prisma.membership.findMany({
+    where: { institutionId },
+    orderBy: [{ role: 'asc' }, { createdAt: 'asc' }],
+    include: { user: { select: { id: true, name: true, email: true } } },
+  });
+}
+
 export function getUserInstitutions(userId: string) {
   return prisma.membership.findMany({
     where: { userId },
