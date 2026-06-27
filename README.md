@@ -67,9 +67,17 @@ If the Prisma engine auto-download is blocked, fetch the query + schema engines
 manually and point Prisma at them via `PRISMA_QUERY_ENGINE_LIBRARY` and
 `PRISMA_SCHEMA_ENGINE_BINARY` (see `.env.example`).
 
-## Deployment (Phase 6)
+## Deployment
 
-Target is Vercel + hosted Postgres (Neon/Supabase). Set `DATABASE_URL`,
-`AUTH_SECRET`, `AUTH_URL`, `GOOGLE_CLIENT_ID/SECRET` (and optional
-`BLOB_READ_WRITE_TOKEN`), run `prisma migrate deploy`, and configure the Google
-OAuth callback. Not yet wired — requires project credentials.
+Target is Vercel + hosted Postgres (Neon/Supabase). The repo includes a
+`vercel-build` script (`prisma generate && prisma migrate deploy && next build`)
+so migrations apply on every deploy. Full step-by-step (env vars, Google OAuth
+callback, seeding, smoke test) is in **[docs/DEPLOY.md](docs/DEPLOY.md)**. Live
+deploy needs your own DB/auth/OAuth credentials.
+
+## Status
+
+All planned phases are implemented: scaffold + data model + auth (1–2), read UI
+(3), diagrams (3.5), write/review flows (4), institution management (5), and
+deploy-readiness + docs (6). AI-assisted review (`lib/review/ai.ts`) is a stub
+seam for later.
