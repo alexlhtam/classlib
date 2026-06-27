@@ -4,33 +4,61 @@ import { getSuggestions } from '@/lib/queries';
 import { StatusBadge } from '@/components/ui';
 import { I } from '@/components/icons';
 import { suggestionStatusKey } from '@/lib/status';
-import { SectionHeader } from '@/components/HomeView';
+
+const FILTERS = [
+  { key: 'open', label: 'Open', match: (st: string) => st === 'OPEN' },
+  { key: 'merged', label: 'Merged', match: (st: string) => st === 'MERGED' },
+  { key: 'all', label: 'All', match: () => true },
+] as const;
 
 export default async function PullsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ institution: string }>;
+  searchParams: Promise<{ filter?: string }>;
 }) {
   const { institution: slug } = await params;
+  const { filter: rawFilter } = await searchParams;
   const { institution } = await guardMembership(slug);
-  const suggestions = await getSuggestions(institution.id);
-  const openCount = suggestions.filter((s) => s.status === 'OPEN').length;
+  const all = await getSuggestions(institution.id);
+  const openCount = all.filter((s) => s.status === 'OPEN').length;
+
+  const active = FILTERS.find((f) => f.key === rawFilter) ?? FILTERS[0];
+  const suggestions = all.filter((s) => active.match(s.status));
 
   return (
     <div style={{ maxWidth: 920, margin: '0 auto', padding: '36px 26px', color: 'var(--cl-ink)' }}>
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ marginBottom: 18 }}>
         <h1 style={{ margin: 0, fontSize: 32, fontWeight: 500, letterSpacing: -0.4, fontFamily: 'var(--cl-body-font)' }}>
           Pull requests
         </h1>
         <p style={{ margin: '8px 0 0', color: 'var(--cl-ink-soft)', fontSize: 14 }}>
-          Suggested edits awaiting review. {openCount} open.
+          Suggested edits reviewed before they merge. {openCount} open.
         </p>
       </div>
 
-      <SectionHeader>{suggestions.length} total</SectionHeader>
+      <div style={{ display: 'flex', gap: 4, padding: 2, background: 'var(--cl-chip)', borderRadius: 'var(--cl-radius)', width: 'fit-content', marginBottom: 18 }}>
+        {FILTERS.map((f) => (
+          <Link
+            key={f.key}
+            href={`/${slug}/pulls?filter=${f.key}`}
+            style={{
+              padding: '4px 12px', fontSize: 12, fontWeight: 500, borderRadius: 'calc(var(--cl-radius) - 2px)',
+              textDecoration: 'none', textTransform: 'capitalize',
+              background: active.key === f.key ? 'var(--cl-bg)' : 'transparent',
+              color: active.key === f.key ? 'var(--cl-ink)' : 'var(--cl-ink-soft)',
+              boxShadow: active.key === f.key ? '0 1px 2px rgba(0,0,0,.06)' : 'none',
+            }}
+          >
+            {f.label}
+            {f.key === 'open' && <span style={{ color: 'var(--cl-ink-faint)', marginLeft: 5 }}>{openCount}</span>}
+          </Link>
+        ))}
+      </div>
 
       {suggestions.length === 0 ? (
-        <div style={{ fontSize: 13, color: 'var(--cl-ink-faint)' }}>No suggestions yet.</div>
+        <div style={{ fontSize: 13, color: 'var(--cl-ink-faint)' }}>No {active.key === 'all' ? '' : active.key} suggestions.</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {suggestions.map((s, i) => (

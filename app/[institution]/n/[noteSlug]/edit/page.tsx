@@ -1,10 +1,8 @@
 import { notFound } from 'next/navigation';
 import { guardMembership } from '@/lib/guard';
 import { getNoteBySlug } from '@/lib/queries';
-import { ComingSoon } from '@/components/ComingSoon';
+import { EditorView } from '@/components/EditorView';
 
-// Placeholder until Phase 4 (the Write/Split/Read editor + createSuggestion
-// server action that opens a PR). Membership-gated like every tenant route.
 export default async function EditPage({
   params,
 }: {
@@ -16,12 +14,12 @@ export default async function EditPage({
   if (!note) notFound();
 
   return (
-    <ComingSoon
-      title={`Suggest an edit to ${note.title}`}
-      subtitle="Editor"
-      body="The Markdown editor with live diff and the “open a pull request” flow land in Phase 4."
-      backHref={`/${slug}/n/${note.slug}`}
-      backLabel={`Back to ${note.title}`}
+    <EditorView
+      slug={slug}
+      noteSlug={note.slug}
+      noteTitle={note.title}
+      version={note.version}
+      baseBody={note.body}
     />
   );
 }
