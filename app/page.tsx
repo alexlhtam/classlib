@@ -38,6 +38,9 @@ export default async function LandingPage() {
         <section style={{ marginTop: 40 }}>
           <div
             style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              justifyContent: 'space-between',
               fontSize: 12,
               fontWeight: 600,
               color: 'var(--cl-ink-soft)',
@@ -49,7 +52,10 @@ export default async function LandingPage() {
               marginBottom: 12,
             }}
           >
-            Your classlibs
+            <span>Your classlibs</span>
+            <Link href="/new" style={{ color: 'var(--cl-accent)', textDecoration: 'none', letterSpacing: 0, textTransform: 'none', fontVariant: 'normal' }}>
+              + Create
+            </Link>
           </div>
 
           {memberships.length === 0 ? (
