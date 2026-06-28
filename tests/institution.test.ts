@@ -10,12 +10,10 @@ const db = vi.hoisted(() => {
   return m;
 });
 const authMock = vi.hoisted(() => vi.fn());
-const seedMock = vi.hoisted(() => vi.fn());
 const gate = vi.hoisted(() => ({ requireAdmin: vi.fn() }));
 
 vi.mock('../lib/db', () => ({ prisma: db }));
 vi.mock('../lib/auth', () => ({ auth: authMock }));
-vi.mock('../lib/seed-content', () => ({ seedInstitutionContent: seedMock }));
 vi.mock('../lib/tenancy', () => {
   class TenancyError extends Error {
     constructor(public code: string, msg?: string) {
@@ -34,7 +32,7 @@ beforeEach(() => {
 });
 
 describe('createInstitution', () => {
-  it('creates the institution with the creator as ADMIN and seeds content', async () => {
+  it('creates the institution with the creator as ADMIN', async () => {
     authMock.mockResolvedValue({ user: { id: 'u1' } });
     db.institution.findUnique.mockResolvedValue(null);
     db.institution.create.mockResolvedValue({ id: 'inst1', slug: 'demo2' });
@@ -44,7 +42,6 @@ describe('createInstitution', () => {
     expect(res).toEqual({ ok: true, slug: 'demo2' });
     const data = db.institution.create.mock.calls[0][0].data;
     expect(data.memberships.create).toEqual([{ userId: 'u1', role: 'ADMIN' }]);
-    expect(seedMock).toHaveBeenCalledWith(db, 'inst1', 'u1');
   });
 
   it('rejects a taken slug', async () => {

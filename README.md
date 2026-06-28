@@ -13,8 +13,8 @@ reference.
 
 - **Next.js** (App Router) + **TypeScript**
 - **Auth.js (NextAuth v5)** — Google OAuth + email/password
-- **Prisma** + **PostgreSQL** — per-institution multi-tenancy (seeded copy per
-  institution; every tenant-scoped row carries `institutionId`)
+- **Prisma** + **PostgreSQL** — per-institution multi-tenancy (every
+  tenant-scoped row carries `institutionId`)
 - Server Markdown + KaTeX rendering, LCS diff for PR review
 
 ## Status

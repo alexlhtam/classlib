@@ -64,7 +64,7 @@ your host doesn't pick up `vercel-build`, set the Build Command to that string.)
 Production starts with an empty database. Two ways to get content:
 
 - **Self-serve (recommended):** register an account, then **Create a classlib** —
-  each new institution is auto-seeded with the canonical course content.
+  each new institution starts empty; add modules and notes from the dashboard.
 - **Demo data:** run the seed once against the production DB from your machine:
   ```
   DATABASE_URL="<prod url>" npm run db:seed
@@ -76,7 +76,7 @@ Production starts with an empty database. Two ways to get content:
 
 1. Visit `https://YOUR_DOMAIN` → landing renders.
 2. Register / sign in (and Google, if configured).
-3. Create a classlib → it lands seeded with modules + notes.
+3. Create a classlib → it's ready to add content.
 4. Open a note → Markdown, LaTeX, and diagrams render.
 5. Suggest an edit → a PR opens; as a maintainer, approve & merge → the note
    updates and its version bumps.

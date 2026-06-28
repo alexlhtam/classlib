@@ -175,11 +175,17 @@ export function HomeView({
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-        {filtered.map((m) => (
-          <ModuleCard key={m.id} slug={slug} m={m} />
-        ))}
-      </div>
+      {filtered.length === 0 && !search ? (
+        <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--cl-ink-faint)', fontSize: 15 }}>
+          No modules yet. Create your first module to get started.
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          {filtered.map((m) => (
+            <ModuleCard key={m.id} slug={slug} m={m} />
+          ))}
+        </div>
+      )}
 
       <div style={{ marginTop: 40 }}>
         <SectionHeader>Recent activity</SectionHeader>
