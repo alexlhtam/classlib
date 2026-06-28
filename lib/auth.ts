@@ -58,6 +58,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
+  // Trust the deployment host. Without this, Auth.js throws UntrustedHost when
+  // the request host doesn't match AUTH_URL (e.g. Vercel deployment-hash URLs
+  // and preview deployments), which surfaces as a server-side 500 on any page
+  // that calls auth(). Safe for Vercel / self-hosted single-app deployments.
+  trustHost: true,
   providers,
   callbacks: {
     jwt({ token, user }) {
