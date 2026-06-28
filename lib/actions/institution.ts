@@ -1,13 +1,8 @@
 'use server';
 
-// Server actions for institution lifecycle. createInstitution implements the
-// "seeded copy per institution" model: the creator becomes ADMIN and the
-// canonical template is deep-copied into the new tenant in one transaction.
-
 import { z } from 'zod';
 import { prisma } from '../db';
 import { auth } from '../auth';
-import { seedInstitutionContent } from '../seed-content';
 
 const slugSchema = z
   .string()
@@ -42,15 +37,12 @@ export async function createInstitution(
   const existing = await prisma.institution.findUnique({ where: { slug } });
   if (existing) return { ok: false, error: 'That slug is already taken.' };
 
-  await prisma.$transaction(async (tx) => {
-    const institution = await tx.institution.create({
-      data: {
-        name,
-        slug,
-        memberships: { create: [{ userId, role: 'ADMIN' }] },
-      },
-    });
-    await seedInstitutionContent(tx, institution.id, userId);
+  await prisma.institution.create({
+    data: {
+      name,
+      slug,
+      memberships: { create: [{ userId, role: 'ADMIN' }] },
+    },
   });
 
   return { ok: true, slug };

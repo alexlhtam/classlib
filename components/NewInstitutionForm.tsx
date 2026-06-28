@@ -1,8 +1,7 @@
 'use client';
 
 // Create-a-classlib form. Calls the createInstitution server action (which makes
-// the creator an ADMIN and deep-copies the canonical content), then routes into
-// the new institution.
+// the creator an ADMIN), then routes into the new institution.
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -67,7 +66,7 @@ export function NewInstitutionForm() {
         {pending ? 'Creating…' : 'Create classlib'}
       </button>
       <p style={{ fontSize: 12, color: 'var(--cl-ink-faint)', margin: 0 }}>
-        You’ll be the maintainer, and it starts seeded with the canonical course content.
+        You’ll be the maintainer. Add modules and notes once it’s created.
       </p>
     </form>
   );
